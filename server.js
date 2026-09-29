@@ -27,7 +27,7 @@ const upload = multer({
   }
 });
 
-app.use(express.static("public"));
+app.use(express.static("."));
 
 app.post("/api/convert", upload.single("pdf"), async (req, res) => {
   let uploadedFile;
