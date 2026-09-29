@@ -1,1 +1,454 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StudyComic AI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef2f7;
+  color: #172033;
+}
+
+header {
+  background: white;
+  padding: 16px 6%;
+  border-bottom: 1px solid #dbe4ef;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  color: #10233f;
+}
+
+.logo span {
+  color: #2563eb;
+}
+
+.hero {
+  text-align: center;
+  padding: 65px 20px;
+  background: linear-gradient(135deg, #e7f2ff, white);
+}
+
+.hero h1 {
+  max-width: 850px;
+  margin: auto;
+  font-size: clamp(40px, 7vw, 65px);
+  color: #10233f;
+}
+
+.hero h1 span {
+  color: #2563eb;
+}
+
+.hero p {
+  max-width: 680px;
+  margin: 20px auto;
+  color: #64748b;
+  font-size: 18px;
+}
+
+section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 55px 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title h2 {
+  color: #10233f;
+  font-size: 34px;
+}
+
+.title p {
+  color: #64748b;
+}
+
+.upload {
+  background: white;
+  border: 2px dashed #8dbcf5;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+}
+
+.upload-icon {
+  font-size: 60px;
+}
+
+.choose,
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.choose {
+  display: inline-block;
+  background: #2563eb;
+  color: white;
+}
+
+input {
+  display: none;
+}
+
+.filename {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #475569;
+}
+
+.actions {
+  text-align: center;
+  margin: 20px;
+}
+
+.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.secondary {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.status {
+  text-align: center;
+  color: #64748b;
+  min-height: 25px;
+}
+
+.spinner {
+  display: none;
+  width: 40px;
+  height: 40px;
+  margin: 20px auto;
+  border: 4px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.result {
+  display: none;
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.result img {
+  width: 100%;
+  max-width: 800px;
+  border: 5px solid #111827;
+}
+
+footer {
+  background: #10233f;
+  color: #b7c5d9;
+  text-align: center;
+  padding: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    Study<span>Comic AI</span>
+  </div>
+</header>
+
+<div class="hero">
+
+<h1>
+Turn your study PDF into a
+<span>real comic page.</span>
+</h1>
+
+<p>
+Upload your PDF and let AI turn the actual study content
+into an educational comic.
+</p>
+
+</div>
+
+<section>
+
+<div class="title">
+<h2>Upload Your PDF</h2>
+<p>PDF is the only input.</p>
+</div>
+
+<div class="upload">
+
+<div class="upload-icon">📄</div>
+
+<h3>Choose your study PDF</h3>
+
+<label class="choose" for="pdf">
+Choose PDF File
+</label>
+
+<input
+  id="pdf"
+  type="file"
+  accept=".pdf,application/pdf"
+>
+
+<div class="filename" id="filename">
+No PDF selected
+</div>
+
+</div>
+
+<div class="actions">
+
+<button
+  class="primary"
+  id="convert">
+✨ Create Real Comic
+</button>
+
+<button
+  class="secondary"
+  id="clear">
+Clear
+</button>
+
+</div>
+
+<div class="status" id="status">
+Ready.
+</div>
+
+<div class="spinner" id="spinner"></div>
+
+</section>
+
+<section>
+
+<div class="title">
+
+<h2>Your Comic</h2>
+
+<p>
+Your AI-generated comic page will appear here.
+</p>
+
+</div>
+
+<div class="result" id="result">
+
+<img id="comicImage">
+
+<div class="actions">
+
+<button
+  class="primary"
+  id="download">
+📥 Download Comic
+</button>
+
+<button
+  class="secondary"
+  onclick="window.print()">
+🖨️ Save as PDF
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+© 2026 StudyComic AI
+</footer>
+
+<script>
+
+const pdf =
+document.getElementById("pdf");
+
+const filename =
+document.getElementById("filename");
+
+const status =
+document.getElementById("status");
+
+const spinner =
+document.getElementById("spinner");
+
+const result =
+document.getElementById("result");
+
+const comicImage =
+document.getElementById("comicImage");
+
+
+pdf.addEventListener("change", () => {
+
+  if (pdf.files.length > 0) {
+
+    filename.textContent =
+      pdf.files[0].name;
+
+    status.textContent =
+      "PDF selected. Ready to create comic.";
+
+  } else {
+
+    filename.textContent =
+      "No PDF selected";
+
+  }
+
+});
+
+
+document
+.getElementById("convert")
+.addEventListener("click", async () => {
+
+  if (!pdf.files.length) {
+
+    alert("Please choose a PDF first.");
+
+    return;
+
+  }
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "pdf",
+    pdf.files[0]
+  );
+
+  spinner.style.display = "block";
+
+  status.textContent =
+    "AI is reading your PDF and creating the comic...";
+
+  result.style.display = "none";
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/convert",
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Comic generation failed."
+      );
+
+    }
+
+    comicImage.src =
+      data.image;
+
+    result.style.display =
+      "block";
+
+    status.textContent =
+      "Comic created successfully!";
+
+    result.scrollIntoView({
+      behavior: "smooth"
+    });
+
+  } catch (error) {
+
+    status.textContent =
+      error.message;
+
+    alert(error.message);
+
+  } finally {
+
+    spinner.style.display =
+      "none";
+
+  }
+
+});
+
+
+document
+.getElementById("clear")
+.addEventListener("click", () => {
+
+  pdf.value = "";
+
+  filename.textContent =
+    "No PDF selected";
+
+  status.textContent =
+    "Ready.";
+
+  result.style.display =
+    "none";
+
+});
+
+
+document
+.getElementById("download")
+.addEventListener("click", () => {
+
+  const link =
+    document.createElement("a");
+
+  link.href =
+    comicImage.src;
+
+  link.download =
+    "StudyComic.png";
+
+  link.click();
+
+});
+
+</script>
+
+</body>
+</html>
